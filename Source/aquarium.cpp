@@ -4,15 +4,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
-
-
 Aquarium::Aquarium(GLFWwindow* window, float wallWidth, float screenWidth, float screenHeight)
     : window(window),
     screenWidth(screenWidth), screenHeight(screenHeight),
     grassTexture(0), grassRightTexture(0), sandTexture(0),
     chestClosedTexture(0), chestOpenTexture(0),
-    goldenFishModelMatrix(0), clownFishModelMatrix(0),
     farPlaneRectangle(0), bottomRectangle(0),
     bubbleTexture(0), foodTexture(0), signatureTexture(0),
     VAOrect(0), VAOrectRight(0), VAOrectBottom(0),
@@ -51,7 +47,10 @@ void Aquarium::processTexture(unsigned& texture, const char* filepath) {
 }
 
 void Aquarium::loadTextures() {
-    goldenFish = new Model("res/low-poly-fox.obj");
+    goldenFishModel = new Model("res/goldFish/12265_Fish_v1_L2.obj");
+    clownFishModel = new Model("res/clownFish/13006_Blue_Tang_v1_l3.obj");
+    pinkCoral = new Model("res/pinkCoral/21488_Tree_Coral_v2_NEW.obj");
+    seaGrass = new Model("res/seaGrass/10010_Coral_v1_L3.obj");
     processTexture(signatureTexture, "res/MilanLazarevicSV2-2022.png");
     processTexture(sandTexture, "res/sandTexture.jpg");
 }
@@ -74,7 +73,7 @@ void::Aquarium::createShaders() {
 }
 
 void::Aquarium::createSandMash(float bottomWidth, float bottomLength) {
-    const int N = 100;          // gustina mreže
+    const int N = 100;         
     const float sizeX = bottomWidth;
     const float sizeZ = bottomLength;
 
@@ -86,14 +85,14 @@ void::Aquarium::createSandMash(float bottomWidth, float bottomLength) {
             float xpos = ( (float)x / ( N - 1 ) - 0.5f ) * sizeX;
             float zpos = ( (float)z / ( N - 1 ) - 0.5f ) * sizeZ;
 
-            float y = ( ( rand() % 100 ) / 1000.0f ); // mala neravnina
+            float y = ( ( rand() % 100 ) / 1000.0f ); 
 
             float u = (float)x / ( N - 1 );
             float v = (float)z / ( N - 1 );
 
             vertices.insert(vertices.end(), {
                 xpos, y, zpos,
-                0.0f, 1.0f, 0.0f, // normal (ok za predmet)
+                0.0f, 1.0f, 0.0f, 
                 u, v
             });
         }
@@ -117,8 +116,18 @@ void::Aquarium::createSandMash(float bottomWidth, float bottomLength) {
 }
 
 void::Aquarium::setup() {
-    goldenFishModelMatrix = glm::mat4(1.0f);
-    goldenFishModelMatrix = glm::translate(goldenFishModelMatrix, glm::vec3(0.0f, 0.0f, -2.0f));
+    goldenFish = new Fish(goldenFishModel, 0.0f, 0.0f, -2.0f, 0.03f, 0.05f, 0.0f);
+    clownFish = new Fish(clownFishModel, -1.0f, 0.0f, -2.0f, 0.09f, 0.06f, -90.0f);
+
+    pinkCoralMatrix = glm::mat4(1.0f);
+    pinkCoralMatrix = glm::translate(pinkCoralMatrix, glm::vec3(-2.5f, -2.0f, -3.8f));
+    pinkCoralMatrix = glm::rotate(pinkCoralMatrix, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    pinkCoralMatrix = glm::scale(pinkCoralMatrix, glm::vec3(0.23f, 0.23f, 0.23f));
+
+    seaGrassMatrix = glm::mat4(1.0f);
+    seaGrassMatrix = glm::translate(seaGrassMatrix, glm::vec3(2.5f, -2.0f, -3.8f));
+    seaGrassMatrix = glm::rotate(seaGrassMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    seaGrassMatrix = glm::scale(seaGrassMatrix, glm::vec3(0.03f, 0.03f, 0.03f));
 
     // far plane glass
     glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
@@ -150,12 +159,16 @@ void::Aquarium::setup() {
     float frontZ = 0.0f; // or wherever your front face should be
     float backZ = cameraPos.z - aquariumDepth; // = -5
 
+
     // Distance from camera to FRONT edge
     float distanceToFront = cameraPos.z - frontZ; // e.g., 5 - 0 = 5
 
     // Width at the front edge to match viewport
     float bottomWidth = 2.0f * distanceToFront * tan(glm::radians(fov / 2.0f)) * aspect;
 
+    height = backWallHeight;
+    width = bottomWidth;
+    depth = backZ;
     // Length: from front to back
     float bottomLength = frontZ - backZ; // e.g., 0 - (-5) = 5
 
@@ -195,14 +208,7 @@ void::Aquarium::setup() {
 
     createSandMash(bottomWidth, bottomLength);
     sand = glm::mat4(1.0f);
-    sand = glm::translate(
-        sand,
-        glm::vec3(
-            0.0f,
-            -backWallHeight / 2.0f + 0.05f,
-            centerZ
-        )
-    );
+    sand = glm::translate(sand,glm::vec3(0.0f,-backWallHeight / 2.0f + 0.05f,centerZ));
 
 }
 
@@ -266,9 +272,36 @@ void::Aquarium::createVAOs() {
          -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f
     };
 
-
     VAOsignature = Renderer::createVAO(verticesSignature, sizeof(verticesSignature), 2, 2, 0);
     VAOFarGlass = Renderer::createVAO(verticesCube, sizeof(verticesCube), 3, 3, 0);
+}
+
+void Aquarium::handleMovement()
+{
+    float leftBound = -width / 2.0f + 0.2f;   
+    float rightBound = width / 2.0f - 0.2f;
+    float bottomBound = -height / 2.0f;
+    float topBound = height / 2.0f - 0.2f;
+    float backBound = depth + 0.2f;  
+    float frontBound = 0.0f - 0.2f;  
+
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { goldenFish->moveRight(); }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { goldenFish->moveLeft(); }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { goldenFish->moveBack(); }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { goldenFish->moveFront(); }
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) { goldenFish->moveUp(); }
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) { goldenFish->moveDown(); }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) { clownFish->moveRight(); }
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) { clownFish->moveLeft(); }
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { clownFish->moveBack(); }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) { clownFish->moveFront(); }
+    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) { clownFish->moveUp(); }
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) { clownFish->moveDown(); }
+
+    goldenFish->checkBoundaries(topBound, bottomBound, leftBound, rightBound, frontBound, backBound);
+    clownFish->checkBoundaries(topBound, bottomBound, leftBound, rightBound, frontBound, backBound);
 }
 
 bool Aquarium::initialize() {
@@ -283,27 +316,30 @@ void::Aquarium::run() {
     glDisable(GL_DEPTH_TEST);
     Renderer::drawTexturedRect(textureShader, VAOsignature, signatureTexture);
 
-    // TODO ovo dole sve stavi u ofu funkciju
     Renderer::drawSquare(unifiedShader, VAOFarGlass, bottomRectangle, 0.3f, 0.3f, 0.3f, 1.0f);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, rightTopEdge, 0.3f, 0.3f, 0.3f, 1.0f);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, leftTopEdge, 0.3f, 0.3f, 0.3f, 1.0f);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, leftBottomEdge, 0.3f, 0.3f, 0.3f, 1.0f);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, rightBottomEdge, 0.3f, 0.3f, 0.3f, 1.0f);
-
     Renderer::drawSquare(unifiedShader, VAOFarGlass, farPlaneRectangle, 0.2f, 0.5f, 0.8f, 0.7f);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, leftWall, 0.2f, 0.5f, 0.8f, 0.7f);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, rightWall, 0.2f, 0.5f, 0.8f, 0.7f);
     
+    handleMovement();
+    goldenFish->draw(unifiedShader);
+    clownFish->draw(unifiedShader);
+    // coral
+    unifiedShader->setBool("uUseTexture", true);  
+    unifiedShader->setMat4("uM", pinkCoralMatrix);
+    pinkCoral->Draw(*unifiedShader);
+    // sea grass
+    unifiedShader->setBool("uUseTexture", true);  
+    unifiedShader->setMat4("uM", seaGrassMatrix);
+    seaGrass->Draw(*unifiedShader);
 
-     //Za ribu koristi teksturu
-    goldenFishModelMatrix = glm::rotate(goldenFishModelMatrix, glm::radians(0.4f), glm::vec3(0.0f, 1.0f, 0.0f));
-    unifiedShader->setBool("uUseTexture", true);  // Vrati na teksturu
-    unifiedShader->setMat4("uM", goldenFishModelMatrix);
-    goldenFish->Draw(*unifiedShader);
     unifiedShader->use();
     unifiedShader->setBool("uUseTexture", true);
     unifiedShader->setMat4("uM", sand);
-
     glBindTexture(GL_TEXTURE_2D, sandTexture);
     Renderer::drawIndexed(VAOsand, sandIndexCount);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, frontWall, 0.2f, 0.5f, 0.8f, 0.3f);

@@ -3,6 +3,7 @@
 #include <iostream>
 #include "../Header/renderer.hpp"
 #include "../Header/model.hpp"
+#include "../Header/fish.hpp"
 
 
 
@@ -32,13 +33,20 @@ private:
 
     unsigned int grassTexture, grassRightTexture, sandTexture;
     unsigned int chestClosedTexture, chestOpenTexture;
-    glm::mat4 goldenFishModelMatrix, clownFishModelMatrix;
+    glm::mat4 goldenFishModelMatrix, clownFishModelMatrix, pinkCoralMatrix, seaGrassMatrix;
     glm::mat4 farPlaneRectangle, bottomRectangle, leftWall, rightWall, frontWall = 0;
     glm::mat4 rightTopEdge, rightBottomEdge, leftTopEdge, leftBottomEdge;
     unsigned int bubbleTexture, foodTexture;
     unsigned int signatureTexture;
+    float height, width, depth;
 
-    Model* goldenFish;
+    Model* goldenFishModel;
+    Model* clownFishModel;
+    Model* pinkCoral;
+    Model* seaGrass;
+
+    Fish* clownFish;
+    Fish* goldenFish;
 
     Shader* unifiedShader; 
     Shader* textureShader;

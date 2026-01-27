@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="fish.cpp" />
     <ClCompile Include="Source\aquarium.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\model.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="Source\util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
     <None Include="Shaders\basic.frag" />
     <None Include="Shaders\basic.vert" />
     <None Include="packages.config" />
@@ -155,6 +157,7 @@
     <None Include="Shaders\texture.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fish.hpp" />
     <ClInclude Include="Header\aquarium.hpp" />
     <ClInclude Include="Header\mesh.hpp" />
     <ClInclude Include="Header\model.hpp" />

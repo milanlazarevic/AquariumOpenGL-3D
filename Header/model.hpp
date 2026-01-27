@@ -23,11 +23,11 @@ public:
     Model(const std::string& path, bool gamma = false);
 
     void Draw(Shader& shader);
+    std::vector<Mesh> meshes;
 
 private:
     // model data
     std::vector<Texture> textures_loaded;
-    std::vector<Mesh> meshes;
     std::string directory;
     bool gammaCorrection;
 
