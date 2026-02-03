@@ -30,12 +30,13 @@ private:
 
     GLFWwindow* window;
     float screenWidth, screenHeight;
+    glm::vec3 cameraPos;
 
-    unsigned int grassTexture, grassRightTexture, sandTexture;
+    unsigned int grassTexture, grassRightTexture, sandTexture, woodTexture;
     unsigned int chestClosedTexture, chestOpenTexture;
-    glm::mat4 goldenFishModelMatrix, clownFishModelMatrix, pinkCoralMatrix, seaGrassMatrix;
+    glm::mat4 goldenFishModelMatrix, clownFishModelMatrix, pinkCoralMatrix, seaGrassMatrix, chestBottomMatrix, chestLidMatrix;
     glm::mat4 farPlaneRectangle, bottomRectangle, leftWall, rightWall, frontWall = 0;
-    glm::mat4 rightTopEdge, rightBottomEdge, leftTopEdge, leftBottomEdge;
+    glm::mat4 rightTopEdge, rightBottomEdge, leftTopEdge, leftBottomEdge, baseCoinMatrix;
     unsigned int bubbleTexture, foodTexture;
     unsigned int signatureTexture;
     float height, width, depth;
@@ -44,6 +45,7 @@ private:
     Model* clownFishModel;
     Model* pinkCoral;
     Model* seaGrass;
+    Model* coinModel;
 
     Fish* clownFish;
     Fish* goldenFish;

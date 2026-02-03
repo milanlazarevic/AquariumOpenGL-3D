@@ -2,7 +2,7 @@
 #include <algorithm>
 
 Fish::Fish(Model* model, float x, float y, float z, float scale, float speed, float baseRotation)
-    : fishModel(model), x(x), y(y), z(z), scale(scale), speed(speed), flipped(false), currentRotationY(0.0f), currentRotationZ(0.0f), baseRotation(baseRotation)
+    : fishModel(model), x(x), y(y), z(z), scale(scale), speed(speed), flipped(false), currentRotationY(0.0f), currentRotationZ(0.0f), currentRotationX(0.0f), baseRotation(baseRotation)
 {
     calculateBoundingBox();
 }
@@ -11,32 +11,43 @@ void Fish::moveLeft() {
     x += speed;
     currentRotationY = 180.0f; 
     currentRotationZ = 0.0f;
+    currentRotationX = 0.0f;
 }
 
 void Fish::moveRight() {
     x -= speed;
     currentRotationY = 0.0f; 
     currentRotationZ = 0.0f;
+    currentRotationX = 0.0f;
 }
 
 void Fish::moveUp() {
     y += speed;
+    currentRotationX = -90.0f;
+    //currentRotationY = 0.0f;
+    //currentRotationZ = 0.0f;
 }
 
 void Fish::moveDown() {
     y -= speed;
+  
+    currentRotationX = 90.0f;
+    //currentRotationY = 0.0f;
+    //currentRotationZ = 0.0f;
 }
 
 void Fish::moveBack() {
     z -= speed;
     currentRotationY = 0.0f;
     currentRotationZ = -90.0f; 
+    currentRotationX = 0.0f;
 }
 
 void Fish::moveFront() {
     z += speed;
     currentRotationY = 0.0f;
     currentRotationZ = 90.0f; 
+    currentRotationX = 0.0f;
 }
 
 void Fish::calculateBoundingBox() {
@@ -62,7 +73,7 @@ void Fish::checkBoundaries(float topBound, float bottomBound, float leftBound, f
         std::abs(maxZ - minZ)
     }) * scale * 0.5f;
 
-    radius *= 0.75f; 
+    radius *= 0.77f; 
 
     if (x - radius < leftBound) {
         x = leftBound + radius;
@@ -142,8 +153,16 @@ void Fish::draw(Shader* shader) {
     if (baseRotation != 0.0f) {
         fishMatrix = glm::rotate(fishMatrix, glm::radians(baseRotation), glm::vec3(0.0f, 0.0f, 1.0f));
     }
+ 
     fishMatrix = glm::rotate(fishMatrix, glm::radians(currentRotationY), glm::vec3(0.0f, 0.0f, 1.0f)); 
     fishMatrix = glm::rotate(fishMatrix, glm::radians(currentRotationZ), glm::vec3(0.0f, 0.0f, 1.0f)); 
+    if (baseRotation != 0.0f) {
+        fishMatrix = glm::rotate(fishMatrix, glm::radians(currentRotationX), glm::vec3(1.0f, 0.0f, 0.0f));
+    }
+    else {
+        fishMatrix = glm::rotate(fishMatrix, glm::radians(-currentRotationX), glm::vec3(0.0f, 1.0f, 0.0f));
+    }
+
     fishMatrix = glm::scale(fishMatrix, glm::vec3(scale, scale, scale));
 
     shader->setBool("uUseTexture", true);

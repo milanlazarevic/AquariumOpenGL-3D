@@ -170,6 +170,7 @@
     <Image Include="res\MilanLazarevicSV2-2022.png" />
     <Image Include="res\sandTexture.jpg" />
     <Image Include="res\texture.png" />
+    <Image Include="res\woodTexture.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

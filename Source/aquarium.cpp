@@ -51,8 +51,28 @@ void Aquarium::loadTextures() {
     clownFishModel = new Model("res/clownFish/13006_Blue_Tang_v1_l3.obj");
     pinkCoral = new Model("res/pinkCoral/21488_Tree_Coral_v2_NEW.obj");
     seaGrass = new Model("res/seaGrass/10010_Coral_v1_L3.obj");
+    coinModel = new Model("res/treasure/13457_Pile_of_Treasure_v1_L1.obj");
     processTexture(signatureTexture, "res/MilanLazarevicSV2-2022.png");
     processTexture(sandTexture, "res/sandTexture.jpg");
+    processTexture(woodTexture, "res/woodTexture.jpg");
+}
+
+void Aquarium::processInput(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+        isChestOpen = !isChestOpen;
+    }
+    /*if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+        spawnBubbles(goldenBubbles, !goldenFish->isFlipped() ? 0.7f + goldenFish->getX() : 1.0f + goldenFish->getX(), 0.25f * goldenFish->getScale() + goldenFish->getY());
+    }*/
+   /* if (key == GLFW_KEY_K && action == GLFW_PRESS) {
+        spawnBubbles(clownBubbles, clownFish->isFlipped() ? -0.34f + clownFish->getX() : -0.7f + clownFish->getX(), 0.3f * clownFish->getScale() + clownFish->getY());
+    }
+    if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
+        foodManager->spawnFood();
+    }*/
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
 }
 
 void::Aquarium::createShaders() {
@@ -120,17 +140,30 @@ void::Aquarium::setup() {
     clownFish = new Fish(clownFishModel, -1.0f, 0.0f, -2.0f, 0.09f, 0.06f, -90.0f);
 
     pinkCoralMatrix = glm::mat4(1.0f);
-    pinkCoralMatrix = glm::translate(pinkCoralMatrix, glm::vec3(-2.5f, -2.0f, -3.8f));
-    pinkCoralMatrix = glm::rotate(pinkCoralMatrix, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    pinkCoralMatrix = glm::scale(pinkCoralMatrix, glm::vec3(0.23f, 0.23f, 0.23f));
+    pinkCoralMatrix = glm::translate(pinkCoralMatrix, glm::vec3(2.5f, -2.0f, -3.8f));
+    //pinkCoralMatrix = glm::rotate(pinkCoralMatrix, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    pinkCoralMatrix = glm::scale(pinkCoralMatrix, glm::vec3(0.13f, 0.13f, 0.13f));
 
     seaGrassMatrix = glm::mat4(1.0f);
-    seaGrassMatrix = glm::translate(seaGrassMatrix, glm::vec3(2.5f, -2.0f, -3.8f));
+    seaGrassMatrix = glm::translate(seaGrassMatrix, glm::vec3(-2.5f, -2.0f, -3.8f));
     seaGrassMatrix = glm::rotate(seaGrassMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    seaGrassMatrix = glm::scale(seaGrassMatrix, glm::vec3(0.03f, 0.03f, 0.03f));
+    seaGrassMatrix = glm::scale(seaGrassMatrix, glm::vec3(0.05f, 0.05f, 0.05f));
+
+    chestBottomMatrix = glm::mat4(1.0f);
+    chestBottomMatrix = glm::translate(chestBottomMatrix, glm::vec3(2.5f, -2.0f, -1.5f));
+
+    chestLidMatrix = glm::mat4(1.0f);
+    chestLidMatrix = glm::translate(chestLidMatrix, glm::vec3(2.5f, -1.35f, -1.5f));
+    chestLidMatrix = glm::scale(chestLidMatrix, glm::vec3(1.0f, 0.3f, 1.0f));
+
+    baseCoinMatrix = glm::mat4(1.0f);
+    baseCoinMatrix = glm::translate(baseCoinMatrix, glm::vec3(2.4f, -1.5f, -1.3f));
+    baseCoinMatrix = glm::rotate(baseCoinMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    baseCoinMatrix = glm::rotate(baseCoinMatrix, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    baseCoinMatrix = glm::scale(baseCoinMatrix, glm::vec3(0.02f, 0.02f, 0.02f));
 
     // far plane glass
-    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
+    cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
     float fov = 45.0f;
     float aspect = screenWidth / screenHeight;
 
@@ -270,10 +303,80 @@ void::Aquarium::createVAOs() {
           0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
          -0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
          -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f
+    }; 
+    float verticesCubeTextured[] = {
+        // ========================
+        // Prednja strana (+Z)
+        // ========================
+        // pos              normal           uv
+        -0.5f,-0.5f, 0.5f,  0,0,1,            0,0,
+         0.5f,-0.5f, 0.5f,  0,0,1,            1,0,
+         0.5f, 0.5f, 0.5f,  0,0,1,            1,1,
+
+         0.5f, 0.5f, 0.5f,  0,0,1,            1,1,
+        -0.5f, 0.5f, 0.5f,  0,0,1,            0,1,
+        -0.5f,-0.5f, 0.5f,  0,0,1,            0,0,
+
+        // ========================
+        // Zadnja strana (-Z)
+        // ========================
+        -0.5f,-0.5f,-0.5f,  0,0,-1,           1,0,
+         0.5f, 0.5f,-0.5f,  0,0,-1,           0,1,
+         0.5f,-0.5f,-0.5f,  0,0,-1,           0,0,
+
+         0.5f, 0.5f,-0.5f,  0,0,-1,           0,1,
+        -0.5f,-0.5f,-0.5f,  0,0,-1,           1,0,
+        -0.5f, 0.5f,-0.5f,  0,0,-1,           1,1,
+
+        // ========================
+        // Leva strana (-X)
+        // ========================
+        -0.5f, 0.5f, 0.5f, -1,0,0,             1,1,
+        -0.5f,-0.5f,-0.5f,-1,0,0,             0,0,
+        -0.5f, 0.5f,-0.5f,-1,0,0,             0,1,
+
+        -0.5f,-0.5f,-0.5f,-1,0,0,             0,0,
+        -0.5f, 0.5f, 0.5f,-1,0,0,             1,1,
+        -0.5f,-0.5f, 0.5f,-1,0,0,             1,0,
+
+        // ========================
+        // Desna strana (+X)
+        // ========================
+         0.5f, 0.5f, 0.5f,  1,0,0,             0,1,
+         0.5f, 0.5f,-0.5f,  1,0,0,             1,1,
+         0.5f,-0.5f,-0.5f,  1,0,0,             1,0,
+
+         0.5f,-0.5f,-0.5f,  1,0,0,             1,0,
+         0.5f,-0.5f, 0.5f,  1,0,0,             0,0,
+         0.5f, 0.5f, 0.5f,  1,0,0,             0,1,
+
+         // ========================
+         // Gornja strana (+Y)
+         // ========================
+         -0.5f, 0.5f,-0.5f,  0,1,0,             0,1,
+          0.5f, 0.5f, 0.5f,  0,1,0,             1,0,
+          0.5f, 0.5f,-0.5f,  0,1,0,             1,1,
+
+          0.5f, 0.5f, 0.5f,  0,1,0,             1,0,
+         -0.5f, 0.5f,-0.5f,  0,1,0,             0,1,
+         -0.5f, 0.5f, 0.5f,  0,1,0,             0,0,
+
+         // ========================
+         // Donja strana (-Y)
+         // ========================
+         -0.5f,-0.5f,-0.5f,  0,-1,0,            0,1,
+          0.5f,-0.5f,-0.5f,  0,-1,0,            1,1,
+          0.5f,-0.5f, 0.5f,  0,-1,0,            1,0,
+
+          0.5f,-0.5f, 0.5f,  0,-1,0,            1,0,
+         -0.5f,-0.5f, 0.5f,  0,-1,0,            0,0,
+         -0.5f,-0.5f,-0.5f,  0,-1,0,            0,1
     };
+
 
     VAOsignature = Renderer::createVAO(verticesSignature, sizeof(verticesSignature), 2, 2, 0);
     VAOFarGlass = Renderer::createVAO(verticesCube, sizeof(verticesCube), 3, 3, 0);
+    VAOchest = Renderer::createTextureVAO(verticesCubeTextured, sizeof(verticesCubeTextured), 3, 2, 0);
 }
 
 void Aquarium::handleMovement()
@@ -313,9 +416,43 @@ bool Aquarium::initialize() {
 }
 
 void::Aquarium::run() {
+
     glDisable(GL_DEPTH_TEST);
     Renderer::drawTexturedRect(textureShader, VAOsignature, signatureTexture);
 
+    Renderer::drawTexturedCube(unifiedShader, VAOchest, chestBottomMatrix, woodTexture, false);
+    if (isChestOpen) {
+        // adding gold light
+        unifiedShader->use();
+        unifiedShader->setBool("useSecondLight", true);
+        unifiedShader->setVec3("uLightPos2", glm::vec3(baseCoinMatrix[3] + 0.3f));
+        unifiedShader->setVec3("uLightColor2", glm::vec3(1.0f, 0.85f, 0.4f)); // zlatna
+        // coin
+        unifiedShader->setBool("uUseTexture", true);
+        unifiedShader->setMat4("uM", baseCoinMatrix);
+        coinModel->Draw(*unifiedShader);
+
+        chestLidMatrix = glm::mat4(1.0f);
+        chestLidMatrix = glm::translate(chestLidMatrix, glm::vec3(2.5f, -1.35f, -1.5f));
+        chestLidMatrix = glm::translate(chestLidMatrix, glm::vec3(0.0f, 0.3f, -0.3f));
+        chestLidMatrix = glm::rotate(
+            chestLidMatrix,
+            glm::radians(-45.0f),
+            glm::vec3(1.0f, 0.0f, 0.0f)
+                );
+
+        chestLidMatrix = glm::scale(chestLidMatrix, glm::vec3(1.0f, 0.3f, 1.0f));
+
+    }
+    else {
+        unifiedShader->use();
+        unifiedShader->setBool("useSecondLight", false);
+        chestLidMatrix = glm::mat4(1.0f);
+        chestLidMatrix = glm::translate(chestLidMatrix, glm::vec3(2.5f, -1.35f, -1.5f));
+        chestLidMatrix = glm::scale(chestLidMatrix, glm::vec3(1.0f, 0.3f, 1.0f));
+    }
+    Renderer::drawTexturedCube(unifiedShader, VAOchest, chestLidMatrix, woodTexture, isChestOpen);
+   
     Renderer::drawSquare(unifiedShader, VAOFarGlass, bottomRectangle, 0.3f, 0.3f, 0.3f, 1.0f);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, rightTopEdge, 0.3f, 0.3f, 0.3f, 1.0f);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, leftTopEdge, 0.3f, 0.3f, 0.3f, 1.0f);
@@ -324,10 +461,8 @@ void::Aquarium::run() {
     Renderer::drawSquare(unifiedShader, VAOFarGlass, farPlaneRectangle, 0.2f, 0.5f, 0.8f, 0.7f);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, leftWall, 0.2f, 0.5f, 0.8f, 0.7f);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, rightWall, 0.2f, 0.5f, 0.8f, 0.7f);
+
     
-    handleMovement();
-    goldenFish->draw(unifiedShader);
-    clownFish->draw(unifiedShader);
     // coral
     unifiedShader->setBool("uUseTexture", true);  
     unifiedShader->setMat4("uM", pinkCoralMatrix);
@@ -342,5 +477,14 @@ void::Aquarium::run() {
     unifiedShader->setMat4("uM", sand);
     glBindTexture(GL_TEXTURE_2D, sandTexture);
     Renderer::drawIndexed(VAOsand, sandIndexCount);
+    handleMovement();
+    goldenFish->draw(unifiedShader);
+    clownFish->draw(unifiedShader);
     Renderer::drawSquare(unifiedShader, VAOFarGlass, frontWall, 0.2f, 0.5f, 0.8f, 0.3f);
+}
+
+void Aquarium::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    Aquarium* aquarium = static_cast<Aquarium*>( glfwGetWindowUserPointer(window) );
+    if (aquarium)
+        aquarium->processInput(window, key, scancode, action, mods);
 }

@@ -71,6 +71,8 @@ int main()
         std::cerr << "Failed to initialize aquarium" << std::endl;
         return -1;
     }
+    glfwSetWindowUserPointer(window, &aquarium);
+    glfwSetKeyCallback(window, Aquarium::keyCallback);
 
     
     // Enable depth test and blending ONCE

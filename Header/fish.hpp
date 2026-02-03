@@ -25,6 +25,7 @@ public:
     void draw(Shader* shader);
 
 private:
+    float currentRotationX;
     float currentRotationY; 
     float currentRotationZ;
     float baseRotation;

@@ -1,0 +1,92 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 14.02.2012 14:16:39
+
+newmtl gold
+	Ns 49.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.8627 0.5529 0.0078
+	Kd 0.8627 0.5529 0.0078
+	Ks 0.5976 0.5482 0.3200
+	Ke 0.0000 0.0000 0.0000
+
+newmtl pearl
+	Ns 49.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.6824 0.8549 0.7922
+	Kd 0.6824 0.8549 0.7922
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000
+
+newmtl pearl2
+	Ns 49.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.8588 0.6471 0.5843
+	Kd 0.8588 0.6471 0.5843
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000
+
+newmtl doubloon
+	Ns 46.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000
+	map_Ka 13457_Pile_of_Treasure_doubloon_diff.jpg
+	map_Kd 13457_Pile_of_Treasure_doubloon_diff.jpg
+	map_bump 13457_Pile_of_Treasure_doubloon_bump.jpg
+	bump 13457_Pile_of_Treasure_doubloon_bump.jpg
+
+newmtl pearl3
+	Ns 49.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.9725 0.9333 0.9176
+	Kd 0.9725 0.9333 0.9176
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000
+
+newmtl gem
+	Ns 46.0000
+	Ni 1.5000
+	d 0.7000
+	Tr 0.3000
+	Tf 0.7000 0.7000 0.7000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000
+	map_Ka 13457_Pile_of_Treasure_gem_diff.jpg
+	map_Kd 13457_Pile_of_Treasure_gem_diff.jpg
+
+newmtl silver
+	Ns 48.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.9333 0.9333 0.9333
+	Kd 0.9333 0.9333 0.9333
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000
