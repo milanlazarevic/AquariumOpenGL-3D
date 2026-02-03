@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\bubble.cpp" />
     <ClCompile Include="Source\fish.cpp" />
     <ClCompile Include="Source\aquarium.cpp" />
     <ClCompile Include="Source\Main.cpp" />
@@ -158,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\aquarium.hpp" />
+    <ClInclude Include="Header\bubble.hpp" />
     <ClInclude Include="Header\fish.hpp" />
     <ClInclude Include="Header\mesh.hpp" />
     <ClInclude Include="Header\model.hpp" />

@@ -4,6 +4,7 @@
 #include "../Header/renderer.hpp"
 #include "../Header/model.hpp"
 #include "../Header/fish.hpp"
+#include "../Header/bubble.hpp"
 
 
 
@@ -22,6 +23,7 @@ private:
     void processInput(GLFWwindow* window, int key, int scancode, int action, int mods);
     void processTexture(unsigned& texture, const char* filepath);
     void createShaders();
+    void spawnBubbles(Bubble(&bubbles)[3], float fishX, float fishY, float fishZ);
     void createVAOs();
     void update();
     void render();
@@ -46,6 +48,7 @@ private:
     Model* pinkCoral;
     Model* seaGrass;
     Model* coinModel;
+    Model* bubbleModel = new Model("res/bubble/bubble.obj");
 
     Fish* clownFish;
     Fish* goldenFish;
@@ -54,6 +57,16 @@ private:
     Shader* textureShader;
     unsigned int VAOFarGlass;
 
+    Bubble goldenBubbles[3] = {
+           Bubble(bubbleModel,0.01f),
+           Bubble(bubbleModel,0.02f),
+           Bubble(bubbleModel,0.03f)
+    };
+    Bubble clownBubbles[3] = {
+            Bubble(bubbleModel,0.01f),
+            Bubble(bubbleModel,0.02f),
+            Bubble(bubbleModel,0.03f)
+    };
 
     unsigned int VAOrect, VAOrectRight, VAOrectBottom;
     unsigned int VAOglassOverlay, VAOsandOverlay;

@@ -9,6 +9,7 @@ Fish::Fish(Model* model, float x, float y, float z, float scale, float speed, fl
 
 void Fish::moveLeft() {
     x += speed;
+    flipped = false;
     currentRotationY = 180.0f; 
     currentRotationZ = 0.0f;
     currentRotationX = 0.0f;
@@ -16,6 +17,7 @@ void Fish::moveLeft() {
 
 void Fish::moveRight() {
     x -= speed;
+    flipped = true;
     currentRotationY = 0.0f; 
     currentRotationZ = 0.0f;
     currentRotationX = 0.0f;

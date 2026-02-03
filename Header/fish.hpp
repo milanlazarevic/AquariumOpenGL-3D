@@ -23,19 +23,19 @@ public:
     void calculateBoundingBox();
     void eat();
     void draw(Shader* shader);
+    float minX, maxX; 
+    float minY, maxY;  
+    float minZ, maxZ;
+    float x, y, z;
 
 private:
     float currentRotationX;
     float currentRotationY; 
     float currentRotationZ;
     float baseRotation;
-    float minX, maxX; 
-    float minY, maxY;  
-    float minZ, maxZ;
     glm::mat4 fishMatrix;
     Model* fishModel;
     float scale;
     float speed;
     bool flipped;
-    float x, y, z;
 };

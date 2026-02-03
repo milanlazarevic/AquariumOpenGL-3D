@@ -61,15 +61,15 @@ void Aquarium::processInput(GLFWwindow* window, int key, int scancode, int actio
     if (key == GLFW_KEY_C && action == GLFW_PRESS) {
         isChestOpen = !isChestOpen;
     }
-    /*if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
-        spawnBubbles(goldenBubbles, !goldenFish->isFlipped() ? 0.7f + goldenFish->getX() : 1.0f + goldenFish->getX(), 0.25f * goldenFish->getScale() + goldenFish->getY());
-    }*/
-   /* if (key == GLFW_KEY_K && action == GLFW_PRESS) {
-        spawnBubbles(clownBubbles, clownFish->isFlipped() ? -0.34f + clownFish->getX() : -0.7f + clownFish->getX(), 0.3f * clownFish->getScale() + clownFish->getY());
+    if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+        spawnBubbles(goldenBubbles, goldenFish->isFlipped() ? (goldenFish->minX ) * goldenFish->getScale() + goldenFish->x : ( goldenFish->maxX) * goldenFish->getScale() + goldenFish->x, ( goldenFish->minY ) * goldenFish->getScale() + goldenFish->y, ( goldenFish->maxZ  ) *goldenFish->getScale() + goldenFish->z);
     }
-    if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
-        foodManager->spawnFood();
-    }*/
+    if (key == GLFW_KEY_I && action == GLFW_PRESS) {
+        spawnBubbles(clownBubbles, clownFish->isFlipped() ? ( clownFish->minX ) * clownFish->getScale() + clownFish->x : ( clownFish->maxX ) * clownFish->getScale() + clownFish->x, ( clownFish->maxY / 2.0f ) * clownFish->getScale() + clownFish->y, ( clownFish->maxZ ) * clownFish->getScale() + clownFish->z);
+    }
+    //if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
+    //    foodManager->spawnFood();
+    //}
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
@@ -418,6 +418,9 @@ bool Aquarium::initialize() {
 void::Aquarium::run() {
 
     glDisable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Renderer::drawTexturedRect(textureShader, VAOsignature, signatureTexture);
 
     Renderer::drawTexturedCube(unifiedShader, VAOchest, chestBottomMatrix, woodTexture, false);
@@ -463,7 +466,7 @@ void::Aquarium::run() {
     Renderer::drawSquare(unifiedShader, VAOFarGlass, rightWall, 0.2f, 0.5f, 0.8f, 0.7f);
 
     
-    // coral
+    //coral
     unifiedShader->setBool("uUseTexture", true);  
     unifiedShader->setMat4("uM", pinkCoralMatrix);
     pinkCoral->Draw(*unifiedShader);
@@ -480,6 +483,20 @@ void::Aquarium::run() {
     handleMovement();
     goldenFish->draw(unifiedShader);
     clownFish->draw(unifiedShader);
+    for (int i = 0; i < 3; i++) {
+        if (goldenBubbles[i].isActive()) {
+            
+            goldenBubbles[i].update(height / 2.0f - 0.2f);
+            goldenBubbles[i].draw(unifiedShader, VAObubble, bubbleTexture);
+        }
+    }
+    for (int i = 0; i < 3; i++) {
+        if (clownBubbles[i].isActive()) {
+
+            clownBubbles[i].update(height / 2.0f - 0.2f);
+            clownBubbles[i].draw(unifiedShader, VAObubble, bubbleTexture);
+        }
+    }
     Renderer::drawSquare(unifiedShader, VAOFarGlass, frontWall, 0.2f, 0.5f, 0.8f, 0.3f);
 }
 
@@ -487,4 +504,11 @@ void Aquarium::keyCallback(GLFWwindow* window, int key, int scancode, int action
     Aquarium* aquarium = static_cast<Aquarium*>( glfwGetWindowUserPointer(window) );
     if (aquarium)
         aquarium->processInput(window, key, scancode, action, mods);
+}
+void Aquarium::spawnBubbles(Bubble(&bubbles)[3], float fishX, float fishY, float fishZ) {
+    for (Bubble& bubble : bubbles) {
+        if (!bubble.isActive()) {
+            bubble.spawn(fishX, fishY + 0.2f, fishZ + 0.1f);
+        }
+    }
 }

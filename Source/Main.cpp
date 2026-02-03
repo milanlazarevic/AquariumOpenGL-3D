@@ -47,7 +47,7 @@ int main()
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
-    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Aquarium3D", primary, NULL);
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Aquarium3D", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Window fail!\n" << std::endl;
