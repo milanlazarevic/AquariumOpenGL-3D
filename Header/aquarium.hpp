@@ -5,6 +5,7 @@
 #include "../Header/model.hpp"
 #include "../Header/fish.hpp"
 #include "../Header/bubble.hpp"
+#include "../Header/foodManager.hpp"
 
 
 
@@ -49,9 +50,12 @@ private:
     Model* seaGrass;
     Model* coinModel;
     Model* bubbleModel = new Model("res/bubble/bubble.obj");
+    Model* fishFoodModel = new Model("res/food/10211_Watermelon_v1-L3.obj");
 
     Fish* clownFish;
     Fish* goldenFish;
+
+    FoodManager* foodManager;
 
     Shader* unifiedShader; 
     Shader* textureShader;

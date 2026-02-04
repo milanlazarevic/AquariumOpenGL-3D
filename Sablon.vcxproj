@@ -144,6 +144,8 @@
     <ClCompile Include="Source\bubble.cpp" />
     <ClCompile Include="Source\fish.cpp" />
     <ClCompile Include="Source\aquarium.cpp" />
+    <ClCompile Include="Source\foodManager.cpp" />
+    <ClCompile Include="Source\foodParticle.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\model.cpp" />
     <ClCompile Include="Source\renderer.cpp" />
@@ -161,6 +163,8 @@
     <ClInclude Include="Header\aquarium.hpp" />
     <ClInclude Include="Header\bubble.hpp" />
     <ClInclude Include="Header\fish.hpp" />
+    <ClInclude Include="Header\foodManager.hpp" />
+    <ClInclude Include="Header\foodParticle.hpp" />
     <ClInclude Include="Header\mesh.hpp" />
     <ClInclude Include="Header\model.hpp" />
     <ClInclude Include="Header\renderer.hpp" />

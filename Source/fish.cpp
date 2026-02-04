@@ -144,7 +144,7 @@ void Fish::checkBoundaries(float topBound, float bottomBound, float leftBound, f
 //}
 
 void Fish::eat() {
-    scale += 0.1f;
+    scale += 0.001f;
     if (scale > 2.0f) scale = 2.0f;
 }
 

@@ -12,7 +12,6 @@ void Bubble::spawn(float x, float y, float z) {
 }
 
 void Bubble::update(float maxHeight) {
-    std::cout << "Height" << y << "Max height" << maxHeight << endl;
     if (active) {
         y += speed;
         if (y > maxHeight) {

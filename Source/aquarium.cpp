@@ -67,9 +67,9 @@ void Aquarium::processInput(GLFWwindow* window, int key, int scancode, int actio
     if (key == GLFW_KEY_I && action == GLFW_PRESS) {
         spawnBubbles(clownBubbles, clownFish->isFlipped() ? ( clownFish->minX ) * clownFish->getScale() + clownFish->x : ( clownFish->maxX ) * clownFish->getScale() + clownFish->x, ( clownFish->maxY / 2.0f ) * clownFish->getScale() + clownFish->y, ( clownFish->maxZ ) * clownFish->getScale() + clownFish->z);
     }
-    //if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
-    //    foodManager->spawnFood();
-    //}
+    if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
+        foodManager->spawnFood();
+    }
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
@@ -136,6 +136,7 @@ void::Aquarium::createSandMash(float bottomWidth, float bottomLength) {
 }
 
 void::Aquarium::setup() {
+    foodManager = new FoodManager(unifiedShader, fishFoodModel);
     goldenFish = new Fish(goldenFishModel, 0.0f, 0.0f, -2.0f, 0.03f, 0.05f, 0.0f);
     clownFish = new Fish(clownFishModel, -1.0f, 0.0f, -2.0f, 0.09f, 0.06f, -90.0f);
 
@@ -418,7 +419,7 @@ bool Aquarium::initialize() {
 void::Aquarium::run() {
 
     glDisable(GL_DEPTH_TEST);
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Renderer::drawTexturedRect(textureShader, VAOsignature, signatureTexture);
@@ -438,11 +439,7 @@ void::Aquarium::run() {
         chestLidMatrix = glm::mat4(1.0f);
         chestLidMatrix = glm::translate(chestLidMatrix, glm::vec3(2.5f, -1.35f, -1.5f));
         chestLidMatrix = glm::translate(chestLidMatrix, glm::vec3(0.0f, 0.3f, -0.3f));
-        chestLidMatrix = glm::rotate(
-            chestLidMatrix,
-            glm::radians(-45.0f),
-            glm::vec3(1.0f, 0.0f, 0.0f)
-                );
+        chestLidMatrix = glm::rotate(chestLidMatrix,glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
         chestLidMatrix = glm::scale(chestLidMatrix, glm::vec3(1.0f, 0.3f, 1.0f));
 
@@ -497,6 +494,32 @@ void::Aquarium::run() {
             clownBubbles[i].draw(unifiedShader, VAObubble, bubbleTexture);
         }
     }
+
+    foodManager->draw();
+    foodManager->update(-height / 2.0f + 0.2f);
+    float fishWorldMinX = goldenFish->minX * goldenFish->getScale() + goldenFish->x;
+    float fishWorldMaxX = goldenFish->maxX * goldenFish->getScale() + goldenFish->x;
+    float fishWorldMinY = goldenFish->minY * goldenFish->getScale() + goldenFish->y;
+    float fishWorldMaxY = goldenFish->maxY * goldenFish->getScale() + goldenFish->y;
+    float fishWorldMinZ = goldenFish->minZ * goldenFish->getScale() + goldenFish->z;
+    float fishWorldMaxZ = goldenFish->maxZ * goldenFish->getScale() + goldenFish->z;
+
+    foodManager->checkCollisions(fishWorldMinX, fishWorldMaxX,
+                                 fishWorldMinY, fishWorldMaxY,
+                                 fishWorldMinZ, fishWorldMaxZ,
+                                 std::bind(&Fish::eat, goldenFish));
+
+    fishWorldMinX = clownFish->minX * clownFish->getScale() + clownFish->x;
+    fishWorldMaxX = clownFish->maxX * clownFish->getScale() + clownFish->x;
+    fishWorldMinY = clownFish->minY * clownFish->getScale() + clownFish->y;
+    fishWorldMaxY = clownFish->maxY * clownFish->getScale() + clownFish->y;
+    fishWorldMinZ = clownFish->minZ * clownFish->getScale() + clownFish->z;
+    fishWorldMaxZ = clownFish->maxZ * clownFish->getScale() + clownFish->z;
+
+    foodManager->checkCollisions(fishWorldMinX, fishWorldMaxX,
+                                 fishWorldMinY, fishWorldMaxY,
+                                 fishWorldMinZ, fishWorldMaxZ,
+                                 std::bind(&Fish::eat, clownFish));
     Renderer::drawSquare(unifiedShader, VAOFarGlass, frontWall, 0.2f, 0.5f, 0.8f, 0.3f);
 }
 
@@ -505,6 +528,7 @@ void Aquarium::keyCallback(GLFWwindow* window, int key, int scancode, int action
     if (aquarium)
         aquarium->processInput(window, key, scancode, action, mods);
 }
+
 void Aquarium::spawnBubbles(Bubble(&bubbles)[3], float fishX, float fishY, float fishZ) {
     for (Bubble& bubble : bubbles) {
         if (!bubble.isActive()) {
