@@ -3,13 +3,23 @@
 #include <glm/glm.hpp>
 #include "../Header/model.hpp"
 
+enum class FishDirection {
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN,
+    FRONT,
+    BACK
+};
+
 class Fish {
 public:
     Fish(Model* model, float x, float y, float z, float scale, float speed, float baseRotation);
 
     float getScale() const { return scale; }
-    bool isFlipped() const { return flipped; }
-    void checkChestCollision(bool isChestOpen);
+    bool checkCollisionWithObject(float objMinX, float objMaxX,
+                                     float objMinY, float objMaxY,
+                                     float objMinZ, float objMaxZ);
     void grow();
 
     void moveLeft();
@@ -20,6 +30,8 @@ public:
     void moveFront();
 
     void checkBoundaries(float topBound, float bottomBound, float leftBound, float rightBound, float frontBound, float backBound);
+    glm::vec3 getBubbleSpawnPosition();
+    FishDirection getCurrentDirection() const { return currentDirection; }
     void calculateBoundingBox();
     void eat();
     void draw(Shader* shader);
@@ -29,6 +41,7 @@ public:
     float x, y, z;
 
 private:
+    FishDirection currentDirection;
     float currentRotationX;
     float currentRotationY; 
     float currentRotationZ;
@@ -37,5 +50,4 @@ private:
     Model* fishModel;
     float scale;
     float speed;
-    bool flipped;
 };

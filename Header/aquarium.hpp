@@ -7,12 +7,18 @@
 #include "../Header/bubble.hpp"
 #include "../Header/foodManager.hpp"
 
-
+struct StaticObjectBounds {
+    float minX, maxX, minY, maxY, minZ, maxZ;
+};
 
 class Aquarium {
 public: 
     Aquarium(GLFWwindow* window, float wallWidth, float screenWidth, float screenHeight);
-
+    StaticObjectBounds calculateStaticBounds(const glm::mat4& matrix,
+                                         float modelMinX, float modelMaxX,
+                                         float modelMinY, float modelMaxY,
+                                         float modelMinZ, float modelMaxZ);
+    void setCullingAndDepth(bool isEnabledDepthTest, bool isEnabledFaceCulling, bool cullBackFaces, bool isCCWWinding);
     bool initialize();
     void run();
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -87,4 +93,14 @@ private:
     bool isChestOpen;
 
     float wallWidth;
+
+    bool isEnabledDepthTest = true;
+    bool isEnabledFaceCulling = true;
+    bool cullBackFaces = true;
+    bool isCCWWinding = true;
+
+    bool lastDepthTest = true;
+    bool lastFaceCulling = true;
+    bool lastCullBack = true;
+    bool lastCCWWinding = true;
 };

@@ -2,14 +2,14 @@
 #include <algorithm>
 
 Fish::Fish(Model* model, float x, float y, float z, float scale, float speed, float baseRotation)
-    : fishModel(model), x(x), y(y), z(z), scale(scale), speed(speed), flipped(false), currentRotationY(0.0f), currentRotationZ(0.0f), currentRotationX(0.0f), baseRotation(baseRotation)
+    : fishModel(model), currentDirection(FishDirection::RIGHT), x(x), y(y), z(z), scale(scale), speed(speed), currentRotationY(0.0f), currentRotationZ(0.0f), currentRotationX(0.0f), baseRotation(baseRotation)
 {
     calculateBoundingBox();
 }
 
 void Fish::moveLeft() {
     x += speed;
-    flipped = false;
+    currentDirection = FishDirection::LEFT;
     currentRotationY = 180.0f; 
     currentRotationZ = 0.0f;
     currentRotationX = 0.0f;
@@ -17,7 +17,7 @@ void Fish::moveLeft() {
 
 void Fish::moveRight() {
     x -= speed;
-    flipped = true;
+    currentDirection = FishDirection::RIGHT;
     currentRotationY = 0.0f; 
     currentRotationZ = 0.0f;
     currentRotationX = 0.0f;
@@ -25,6 +25,7 @@ void Fish::moveRight() {
 
 void Fish::moveUp() {
     y += speed;
+    currentDirection = FishDirection::UP;
     currentRotationX = -90.0f;
     //currentRotationY = 0.0f;
     //currentRotationZ = 0.0f;
@@ -32,7 +33,7 @@ void Fish::moveUp() {
 
 void Fish::moveDown() {
     y -= speed;
-  
+    currentDirection = FishDirection::DOWN;
     currentRotationX = 90.0f;
     //currentRotationY = 0.0f;
     //currentRotationZ = 0.0f;
@@ -40,6 +41,7 @@ void Fish::moveDown() {
 
 void Fish::moveBack() {
     z -= speed;
+    currentDirection = FishDirection::BACK;
     currentRotationY = 0.0f;
     currentRotationZ = -90.0f; 
     currentRotationX = 0.0f;
@@ -47,6 +49,7 @@ void Fish::moveBack() {
 
 void Fish::moveFront() {
     z += speed;
+    currentDirection = FishDirection::FRONT;
     currentRotationY = 0.0f;
     currentRotationZ = 90.0f; 
     currentRotationX = 0.0f;
@@ -99,49 +102,58 @@ void Fish::checkBoundaries(float topBound, float bottomBound, float leftBound, f
     }
 }
 
-//void Fish::checkChestCollision(bool isChestOpen) {
-//    const float chestMinX = 0.0f;
-//    const float chestMaxX = 0.4f;
-//    const float chestMinY = -0.85f;
-//    const float chestMaxY = isChestOpen ? -0.85f + ( 0.4f * 1.5f ) : -0.45f;
-//
-//    float fishLeftX = minX + x;
-//    float fishRightX = maxX + x;
-//    float fishBottomY = ( minY * scale ) + y;
-//    float fishTopY = ( maxY * scale ) + y;
-//
-//    bool collisionX = fishRightX >= chestMinX && fishLeftX <= chestMaxX;
-//    bool collisionY = fishTopY >= chestMinY && fishBottomY <= chestMaxY;
-//
-//    if (collisionX && collisionY) {
-//        float overlapLeft = fishRightX - chestMinX;
-//        float overlapRight = chestMaxX - fishLeftX;
-//        float overlapBottom = fishTopY - chestMinY;
-//        float overlapTop = chestMaxY - fishBottomY;
-//
-//
-//        float minOverlapX = std::min(overlapLeft, overlapRight);
-//        float minOverlapY = std::min(overlapBottom, overlapTop);
-//
-//
-//        if (minOverlapX < minOverlapY) {
-//            if (overlapLeft < overlapRight) {
-//                x = chestMinX - maxX;
-//            }
-//            else {
-//                x = chestMaxX - minX;
-//            }
-//        }
-//        else {
-//            if (overlapBottom < overlapTop) {
-//                y = chestMinY - ( maxY * scale );
-//            }
-//            else {
-//                y = chestMaxY - ( minY * scale );
-//            }
-//        }
-//    }
-//}
+glm::vec3 Fish::getBubbleSpawnPosition() {
+    float bubbleX, bubbleY, bubbleZ;
+
+    // Y is always at the middle
+    bubbleY = ( ( minY + maxY ) / 2.0f ) * scale + y;
+
+    // X and Z depend on direction (spawn bubbles at the "mouth" - opposite of movement)
+    switch (currentDirection) {
+    case FishDirection::LEFT:
+        bubbleX = maxX * scale + x;  // Left side
+        bubbleZ = maxZ * scale + z;  // Front
+        break;
+    case FishDirection::RIGHT:
+        bubbleX = minX * scale + x;  // Right side
+        bubbleZ = maxZ * scale + z;  // Front
+        break;
+    case FishDirection::UP:
+        bubbleX = ( ( minX + maxX ) / 2.0f ) * scale + x;  // Middle
+        bubbleZ = maxZ * scale + z;  // Front
+        break;
+    case FishDirection::DOWN:
+        bubbleX = ( ( minX + maxX ) / 2.0f ) * scale + x;  // Middle
+        bubbleZ = minZ * scale + z;  // Front
+        break;
+    case FishDirection::FRONT:
+        bubbleX = ( ( minX + maxX ) / 2.0f ) * scale + x;  // Middle
+        bubbleZ = maxZ * scale + z;  // Front
+        break;
+    case FishDirection::BACK:
+        bubbleX = ( ( minX + maxX ) / 2.0f ) * scale + x;  // Middle
+        bubbleZ = minZ * scale + z;  // Back
+        break;
+    }
+
+
+    return glm::vec3(bubbleX, bubbleY, bubbleZ);
+}
+
+bool Fish::checkCollisionWithObject(float objMinX, float objMaxX,
+                                     float objMinY, float objMaxY,
+                                     float objMinZ, float objMaxZ) {
+    float fishWorldMinX = minX * scale + x;
+    float fishWorldMaxX = maxX * scale + x;
+    float fishWorldMinY = minY * scale + y;
+    float fishWorldMaxY = maxY * scale + y;
+    float fishWorldMinZ = minZ * scale + z;
+    float fishWorldMaxZ = maxZ * scale + z;
+
+    return ( fishWorldMinX <= objMaxX && fishWorldMaxX >= objMinX ) &&
+        ( fishWorldMinY <= objMaxY && fishWorldMaxY >= objMinY ) &&
+        ( fishWorldMinZ <= objMaxZ && fishWorldMaxZ >= objMinZ );
+}
 
 void Fish::eat() {
     scale += 0.001f;

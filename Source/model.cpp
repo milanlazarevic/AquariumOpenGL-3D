@@ -10,12 +10,29 @@ Model::Model(const std::string& path, bool gamma)
     : gammaCorrection(gamma)
 {
     loadModel(path);
+    calculateBoundingBox();
 }
 
 void Model::Draw(Shader& shader)
 {
     for (auto& mesh : meshes)
         mesh.Draw(shader);
+}
+
+void Model::calculateBoundingBox() {
+    minX = minY = minZ = std::numeric_limits<float>::max();
+    maxX = maxY = maxZ = std::numeric_limits<float>::lowest();
+
+    for (const auto& mesh : meshes) {
+        for (const auto& vertex : mesh.vertices) {
+            minX = std::min(minX, vertex.Position.x);
+            maxX = std::max(maxX, vertex.Position.x);
+            minY = std::min(minY, vertex.Position.y);
+            maxY = std::max(maxY, vertex.Position.y);
+            minZ = std::min(minZ, vertex.Position.z);
+            maxZ = std::max(maxZ, vertex.Position.z);
+        }
+    }
 }
 
 void Model::loadModel(const std::string& path)

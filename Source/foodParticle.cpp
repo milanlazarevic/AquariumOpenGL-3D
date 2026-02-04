@@ -63,6 +63,6 @@ bool FoodParticle::checkCollision(float fishXMin, float fishXMax,
 
     // Check overlap on all three axes
     return ( fishXMin <= foodXMax && fishXMax >= foodXMin ) &&
-        ( fishYMin <= foodYMax && fishYMax >= foodYMin ) &&
+        ( fishYMin <= foodYMax + 0.2f && fishYMax >= foodYMin ) &&
         ( fishZMin <= foodZMax && fishZMax >= foodZMin );
 }

@@ -4,6 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+
+
 Aquarium::Aquarium(GLFWwindow* window, float wallWidth, float screenWidth, float screenHeight)
     : window(window),
     screenWidth(screenWidth), screenHeight(screenHeight),
@@ -57,21 +59,103 @@ void Aquarium::loadTextures() {
     processTexture(woodTexture, "res/woodTexture.jpg");
 }
 
+StaticObjectBounds Aquarium::calculateStaticBounds(const glm::mat4& matrix,
+                                         float modelMinX, float modelMaxX,
+                                         float modelMinY, float modelMaxY,
+                                         float modelMinZ, float modelMaxZ) {
+    glm::vec3 position = glm::vec3(matrix[3]);
+    glm::vec3 scale = glm::vec3(
+        glm::length(glm::vec3(matrix[0])),
+        glm::length(glm::vec3(matrix[1])),
+        glm::length(glm::vec3(matrix[2]))
+    );
+
+    return {
+        modelMinX * scale.x + position.x,
+        modelMaxX * scale.x + position.x,
+        modelMinY * scale.y + position.y,
+        modelMaxY * scale.y + position.y,
+        modelMinZ * scale.z + position.z,
+        modelMaxZ * scale.z + position.z
+    };
+}
+
 void Aquarium::processInput(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (action != GLFW_PRESS) return;
     if (key == GLFW_KEY_C && action == GLFW_PRESS) {
         isChestOpen = !isChestOpen;
     }
     if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
-        spawnBubbles(goldenBubbles, goldenFish->isFlipped() ? (goldenFish->minX ) * goldenFish->getScale() + goldenFish->x : ( goldenFish->maxX) * goldenFish->getScale() + goldenFish->x, ( goldenFish->minY ) * goldenFish->getScale() + goldenFish->y, ( goldenFish->maxZ  ) *goldenFish->getScale() + goldenFish->z);
+        glm::vec3 bubblePos = goldenFish->getBubbleSpawnPosition();
+        spawnBubbles(goldenBubbles, bubblePos.x, bubblePos.y, bubblePos.z);
     }
     if (key == GLFW_KEY_I && action == GLFW_PRESS) {
-        spawnBubbles(clownBubbles, clownFish->isFlipped() ? ( clownFish->minX ) * clownFish->getScale() + clownFish->x : ( clownFish->maxX ) * clownFish->getScale() + clownFish->x, ( clownFish->maxY / 2.0f ) * clownFish->getScale() + clownFish->y, ( clownFish->maxZ ) * clownFish->getScale() + clownFish->z);
+        glm::vec3 bubblePos = clownFish->getBubbleSpawnPosition();
+        spawnBubbles(goldenBubbles, bubblePos.x, bubblePos.y, bubblePos.z);
     }
     if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
         foodManager->spawnFood();
     }
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
+    }
+
+    // depth test
+    if (key == GLFW_KEY_1)
+    {
+        isEnabledDepthTest = !isEnabledDepthTest;
+        setCullingAndDepth(isEnabledDepthTest, isEnabledFaceCulling, cullBackFaces, isCCWWinding);
+    }
+    if (key == GLFW_KEY_2)
+    {
+        isEnabledFaceCulling = !isEnabledFaceCulling;
+        setCullingAndDepth(isEnabledDepthTest, isEnabledFaceCulling, cullBackFaces, isCCWWinding);
+    }
+    if (key == GLFW_KEY_3)
+    {
+        cullBackFaces = !cullBackFaces;
+        setCullingAndDepth(isEnabledDepthTest, isEnabledFaceCulling, cullBackFaces, isCCWWinding);
+    }
+    if (key == GLFW_KEY_4)
+    {
+        isCCWWinding = !isCCWWinding;
+        setCullingAndDepth(isEnabledDepthTest, isEnabledFaceCulling, cullBackFaces, isCCWWinding);
+    }
+}
+
+void Aquarium::setCullingAndDepth(bool isEnabledDepthTest, bool isEnabledFaceCulling, bool cullBackFaces, bool isCCWWinding)
+{
+    if (isEnabledDepthTest != lastDepthTest)
+    {
+        if (isEnabledDepthTest)
+            glEnable(GL_DEPTH_TEST);
+        else
+            glDisable(GL_DEPTH_TEST);
+        lastDepthTest = isEnabledDepthTest;
+        std::cout << ( lastDepthTest ? "DEPTH TEST ENABLED" : "DEPTH TEST DISABLED" ) << std::endl;
+    }
+    if (isEnabledFaceCulling != lastFaceCulling)
+    {
+        if (isEnabledFaceCulling)
+            glEnable(GL_CULL_FACE);
+        else
+            glDisable(GL_CULL_FACE);
+        lastFaceCulling = isEnabledFaceCulling;
+        std::cout << ( lastFaceCulling ? "FACECULLING ENABLED" : "FACECULLING DISABLED" ) << std::endl;
+    }
+
+    if (cullBackFaces != lastCullBack)
+    {
+        glCullFace(cullBackFaces ? GL_BACK : GL_FRONT);
+        lastCullBack = cullBackFaces;
+        std::cout << ( lastCullBack ? "CULLING BACK ENABLED" : "CULLING BACK DISABLED" ) << std::endl;
+    }
+
+    if (isCCWWinding != lastCCWWinding)
+    {
+        glFrontFace(isCCWWinding ? GL_CCW : GL_CW);
+        lastCCWWinding = isCCWWinding;
+        std::cout << ( lastCCWWinding ? "CCW WINDING" : "CW WINDING" ) << std::endl;
     }
 }
 
@@ -148,7 +232,7 @@ void::Aquarium::setup() {
     seaGrassMatrix = glm::mat4(1.0f);
     seaGrassMatrix = glm::translate(seaGrassMatrix, glm::vec3(-2.5f, -2.0f, -3.8f));
     seaGrassMatrix = glm::rotate(seaGrassMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    seaGrassMatrix = glm::scale(seaGrassMatrix, glm::vec3(0.05f, 0.05f, 0.05f));
+    seaGrassMatrix = glm::scale(seaGrassMatrix, glm::vec3(0.02f, 0.02f, 0.02f));
 
     chestBottomMatrix = glm::mat4(1.0f);
     chestBottomMatrix = glm::translate(chestBottomMatrix, glm::vec3(2.5f, -2.0f, -1.5f));
@@ -388,7 +472,17 @@ void Aquarium::handleMovement()
     float topBound = height / 2.0f - 0.2f;
     float backBound = depth + 0.2f;  
     float frontBound = 0.0f - 0.2f;  
-
+    StaticObjectBounds pinkCoralBounds = calculateStaticBounds(pinkCoralMatrix,
+                                         pinkCoral->minX, pinkCoral->maxX,
+                                         pinkCoral->minY, pinkCoral->maxY,
+                                         pinkCoral->minZ, pinkCoral->maxZ);
+    StaticObjectBounds seaGrassBounds = calculateStaticBounds(seaGrassMatrix,
+                                         seaGrass->minX, seaGrass->maxX,
+                                         seaGrass->minY, seaGrass->maxY,
+                                         seaGrass->minZ, seaGrass->maxZ);
+    float oldX = goldenFish->x;
+    float oldY = goldenFish->y;
+    float oldZ = goldenFish->z;
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { goldenFish->moveRight(); }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { goldenFish->moveLeft(); }
@@ -397,12 +491,60 @@ void Aquarium::handleMovement()
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) { goldenFish->moveUp(); }
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) { goldenFish->moveDown(); }
 
+    if (goldenFish->checkCollisionWithObject(pinkCoralBounds.minX, pinkCoralBounds.maxX,
+        pinkCoralBounds.minY, pinkCoralBounds.maxY,
+        pinkCoralBounds.minZ, pinkCoralBounds.maxZ)) {
+        goldenFish->x = oldX;
+        goldenFish->y = oldY;
+        goldenFish->z = oldZ;
+    }
+    if (goldenFish->checkCollisionWithObject(seaGrassBounds.minX, seaGrassBounds.maxX,
+        seaGrassBounds.minY, seaGrassBounds.maxY,
+        seaGrassBounds.minZ, seaGrassBounds.maxZ)) {
+        goldenFish->x = oldX;
+        goldenFish->y = oldY;
+        goldenFish->z = oldZ;
+    }
+    if (goldenFish->checkCollisionWithObject(clownFish->minX*clownFish->getScale() + clownFish->x, clownFish->maxX * clownFish->getScale() + clownFish->x,
+        clownFish->minY * clownFish->getScale() + clownFish->y, clownFish->maxY * clownFish->getScale() + clownFish->y,
+        clownFish->minZ * clownFish->getScale() + clownFish->z, clownFish->maxZ * clownFish->getScale() + clownFish->z)) {
+        goldenFish->x = oldX;
+        goldenFish->y = oldY;
+        goldenFish->z = oldZ;
+    }
+     oldX = clownFish->x;
+     oldY = clownFish->y;
+     oldZ = clownFish->z;
+
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) { clownFish->moveRight(); }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) { clownFish->moveLeft(); }
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { clownFish->moveBack(); }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) { clownFish->moveFront(); }
     if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) { clownFish->moveUp(); }
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) { clownFish->moveDown(); }
+
+
+    if (clownFish->checkCollisionWithObject(pinkCoralBounds.minX, pinkCoralBounds.maxX,
+        pinkCoralBounds.minY, pinkCoralBounds.maxY,
+        pinkCoralBounds.minZ, pinkCoralBounds.maxZ)) {
+        clownFish->x = oldX;
+        clownFish->y = oldY;
+        clownFish->z = oldZ;
+    }
+    if (clownFish->checkCollisionWithObject(seaGrassBounds.minX, seaGrassBounds.maxX,
+        seaGrassBounds.minY, seaGrassBounds.maxY,
+        seaGrassBounds.minZ, seaGrassBounds.maxZ)) {
+        clownFish->x = oldX;
+        clownFish->y = oldY;
+        clownFish->z = oldZ;
+    }
+    if (clownFish->checkCollisionWithObject(goldenFish->minX * goldenFish->getScale() + goldenFish->x, goldenFish->maxX * goldenFish->getScale() + goldenFish->x,
+        goldenFish->minY * goldenFish->getScale() + goldenFish->y, goldenFish->maxY * goldenFish->getScale() + goldenFish->y,
+        goldenFish->minZ * goldenFish->getScale() + goldenFish->z, goldenFish->maxZ * goldenFish->getScale() + goldenFish->z)) {
+        clownFish->x = oldX;
+        clownFish->y = oldY;
+        clownFish->z = oldZ;
+    }
 
     goldenFish->checkBoundaries(topBound, bottomBound, leftBound, rightBound, frontBound, backBound);
     clownFish->checkBoundaries(topBound, bottomBound, leftBound, rightBound, frontBound, backBound);
@@ -413,15 +555,23 @@ bool Aquarium::initialize() {
     createShaders();
     createVAOs();
     setup();
+    // Enable depth test and blending ONCE
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     return true;
 }
 
 void::Aquarium::run() {
 
-    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_DEPTH_TEST);
     //glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    setCullingAndDepth(isEnabledDepthTest, isEnabledFaceCulling, cullBackFaces, isCCWWinding);
     Renderer::drawTexturedRect(textureShader, VAOsignature, signatureTexture);
 
     Renderer::drawTexturedCube(unifiedShader, VAOchest, chestBottomMatrix, woodTexture, false);
@@ -532,7 +682,7 @@ void Aquarium::keyCallback(GLFWwindow* window, int key, int scancode, int action
 void Aquarium::spawnBubbles(Bubble(&bubbles)[3], float fishX, float fishY, float fishZ) {
     for (Bubble& bubble : bubbles) {
         if (!bubble.isActive()) {
-            bubble.spawn(fishX, fishY + 0.2f, fishZ + 0.1f);
+            bubble.spawn(fishX, fishY, fishZ);
         }
     }
 }

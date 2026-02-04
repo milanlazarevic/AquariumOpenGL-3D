@@ -24,6 +24,8 @@ public:
 
     void Draw(Shader& shader);
     std::vector<Mesh> meshes;
+    void calculateBoundingBox();
+    float minX, maxX, minY, maxY, minZ, maxZ;
 
 private:
     // model data
@@ -34,6 +36,9 @@ private:
     void loadModel(const std::string& path);
     void processNode(aiNode* node, const aiScene* scene);
     Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+    void getWorldBounds(float& outMinX, float& outMaxX,
+                       float& outMinY, float& outMaxY,
+                       float& outMinZ, float& outMaxZ);
 
     std::vector<Texture> loadMaterialTextures(
         aiMaterial* mat,
