@@ -340,122 +340,106 @@ void::Aquarium::createVAOs() {
       0.65f, 1.0f,   1.0f, 1.0f, // gornje desno
     };
     float verticesCube[] = {
-        // Pozicije (x, y, z)    Normale (nx, ny, nz)
-        // Prednja strana
-        -0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,
-         0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,
+        // Pozicije (x, y, z)           Normale (nx, ny, nz)
+        // Prednja strana (+Z) - Gleda ka kameri
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 
-        // Zadnja strana
-        -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,
-         0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,
+        // Zadnja strana (-Z) - Gleda od kamere
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-        // Leva strana
-        -0.5f,  0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,
-
-        // Desna strana
-         0.5f,  0.5f,  0.5f,    1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,    1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,    1.0f,  0.0f,  0.0f,
-
-         // Gornja strana
-         -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,
-          0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
-          0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,
-          0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
-         -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,
-         -0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
-
-         // Donja strana
-         -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,
-          0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,
-          0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
-          0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
-         -0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
-         -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f
-    }; 
-    float verticesCubeTextured[] = {
-        // ========================
-        // Prednja strana (+Z)
-        // ========================
-        // pos              normal           uv
-        -0.5f,-0.5f, 0.5f,  0,0,1,            0,0,
-         0.5f,-0.5f, 0.5f,  0,0,1,            1,0,
-         0.5f, 0.5f, 0.5f,  0,0,1,            1,1,
-
-         0.5f, 0.5f, 0.5f,  0,0,1,            1,1,
-        -0.5f, 0.5f, 0.5f,  0,0,1,            0,1,
-        -0.5f,-0.5f, 0.5f,  0,0,1,            0,0,
-
-        // ========================
-        // Zadnja strana (-Z)
-        // ========================
-        -0.5f,-0.5f,-0.5f,  0,0,-1,           1,0,
-         0.5f, 0.5f,-0.5f,  0,0,-1,           0,1,
-         0.5f,-0.5f,-0.5f,  0,0,-1,           0,0,
-
-         0.5f, 0.5f,-0.5f,  0,0,-1,           0,1,
-        -0.5f,-0.5f,-0.5f,  0,0,-1,           1,0,
-        -0.5f, 0.5f,-0.5f,  0,0,-1,           1,1,
-
-        // ========================
         // Leva strana (-X)
-        // ========================
-        -0.5f, 0.5f, 0.5f, -1,0,0,             1,1,
-        -0.5f,-0.5f,-0.5f,-1,0,0,             0,0,
-        -0.5f, 0.5f,-0.5f,-1,0,0,             0,1,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-        -0.5f,-0.5f,-0.5f,-1,0,0,             0,0,
-        -0.5f, 0.5f, 0.5f,-1,0,0,             1,1,
-        -0.5f,-0.5f, 0.5f,-1,0,0,             1,0,
-
-        // ========================
         // Desna strana (+X)
-        // ========================
-         0.5f, 0.5f, 0.5f,  1,0,0,             0,1,
-         0.5f, 0.5f,-0.5f,  1,0,0,             1,1,
-         0.5f,-0.5f,-0.5f,  1,0,0,             1,0,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-         0.5f,-0.5f,-0.5f,  1,0,0,             1,0,
-         0.5f,-0.5f, 0.5f,  1,0,0,             0,0,
-         0.5f, 0.5f, 0.5f,  1,0,0,             0,1,
-
-         // ========================
          // Gornja strana (+Y)
-         // ========================
-         -0.5f, 0.5f,-0.5f,  0,1,0,             0,1,
-          0.5f, 0.5f, 0.5f,  0,1,0,             1,0,
-          0.5f, 0.5f,-0.5f,  0,1,0,             1,1,
+         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+          0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+          0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+          0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
 
-          0.5f, 0.5f, 0.5f,  0,1,0,             1,0,
-         -0.5f, 0.5f,-0.5f,  0,1,0,             0,1,
-         -0.5f, 0.5f, 0.5f,  0,1,0,             0,0,
-
-         // ========================
          // Donja strana (-Y)
-         // ========================
-         -0.5f,-0.5f,-0.5f,  0,-1,0,            0,1,
-          0.5f,-0.5f,-0.5f,  0,-1,0,            1,1,
-          0.5f,-0.5f, 0.5f,  0,-1,0,            1,0,
+         -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+          0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+          0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+          0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f
+    };
 
-          0.5f,-0.5f, 0.5f,  0,-1,0,            1,0,
-         -0.5f,-0.5f, 0.5f,  0,-1,0,            0,0,
-         -0.5f,-0.5f,-0.5f,  0,-1,0,            0,1
+    float verticesCubeTextured[] = {
+        // Pozicija (x,y,z)      Normala (nx,ny,nz)   UV (u,v)
+        // ====================================================
+        // Prednja strana (+Z)
+        -0.5f, -0.5f,  0.5f,     0.0f,  0.0f,  1.0f,     0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,     0.0f,  0.0f,  1.0f,     1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,     0.0f,  0.0f,  1.0f,     1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,     0.0f,  0.0f,  1.0f,     1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,     0.0f,  0.0f,  1.0f,     0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,     0.0f,  0.0f,  1.0f,     0.0f, 0.0f,
+
+        // Zadnja strana (-Z)
+        -0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,     0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,     0.0f,  0.0f, -1.0f,     0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,     0.0f,  0.0f, -1.0f,     1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,     0.0f,  0.0f, -1.0f,     1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,     1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,     0.0f, 0.0f,
+
+        // Leva strana (-X)
+        -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,     1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,     0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,     0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,     0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,     1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,     1.0f, 1.0f,
+
+        // Desna strana (+X)
+         0.5f,  0.5f,  0.5f,     1.0f,  0.0f,  0.0f,     0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,     1.0f,  0.0f,  0.0f,     0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,     1.0f,  0.0f,  0.0f,     1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,     1.0f,  0.0f,  0.0f,     1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,     1.0f,  0.0f,  0.0f,     1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,     1.0f,  0.0f,  0.0f,     0.0f, 1.0f,
+
+         // Gornja strana (+Y)
+         -0.5f,  0.5f, -0.5f,     0.0f,  1.0f,  0.0f,     0.0f, 1.0f,
+         -0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,     0.0f, 0.0f,
+          0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,     1.0f, 0.0f,
+          0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,     1.0f, 0.0f,
+          0.5f,  0.5f, -0.5f,     0.0f,  1.0f,  0.0f,     1.0f, 1.0f,
+         -0.5f,  0.5f, -0.5f,     0.0f,  1.0f,  0.0f,     0.0f, 1.0f,
+
+         // Donja strana (-Y)
+         -0.5f, -0.5f, -0.5f,     0.0f, -1.0f,  0.0f,     0.0f, 1.0f,
+          0.5f, -0.5f, -0.5f,     0.0f, -1.0f,  0.0f,     1.0f, 1.0f,
+          0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,     1.0f, 0.0f,
+          0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,     1.0f, 0.0f,
+         -0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,     0.0f, 0.0f,
+         -0.5f, -0.5f, -0.5f,     0.0f, -1.0f,  0.0f,     0.0f, 1.0f
     };
 
 
@@ -480,6 +464,14 @@ void Aquarium::handleMovement()
                                          seaGrass->minX, seaGrass->maxX,
                                          seaGrass->minY, seaGrass->maxY,
                                          seaGrass->minZ, seaGrass->maxZ);
+    StaticObjectBounds chestBottomBounds = calculateStaticBounds(chestBottomMatrix,
+                                            -0.5f, 0.5f,  
+                                            -0.5f, 0.5f,  
+                                            -0.5f, 0.5f);
+    StaticObjectBounds chestTopBounds = calculateStaticBounds(chestLidMatrix,
+                                            -0.5f, 0.5f,
+                                            -0.5f, 0.5f,
+                                            -0.5f, 0.5f);
     float oldX = goldenFish->x;
     float oldY = goldenFish->y;
     float oldZ = goldenFish->z;
@@ -501,6 +493,16 @@ void Aquarium::handleMovement()
     if (goldenFish->checkCollisionWithObject(seaGrassBounds.minX, seaGrassBounds.maxX,
         seaGrassBounds.minY, seaGrassBounds.maxY,
         seaGrassBounds.minZ, seaGrassBounds.maxZ)) {
+        goldenFish->x = oldX;
+        goldenFish->y = oldY;
+        goldenFish->z = oldZ;
+    }
+    if (goldenFish->checkCollisionWithObject(chestBottomBounds.minX, chestBottomBounds.maxX,
+        chestBottomBounds.minY, chestBottomBounds.maxY,
+        chestBottomBounds.minZ, chestBottomBounds.maxZ) || 
+        goldenFish->checkCollisionWithObject(chestTopBounds.minX, chestTopBounds.maxX,
+            chestTopBounds.minY, chestTopBounds.maxY,
+            chestTopBounds.minZ, chestTopBounds.maxZ)) {
         goldenFish->x = oldX;
         goldenFish->y = oldY;
         goldenFish->z = oldZ;
@@ -534,6 +536,16 @@ void Aquarium::handleMovement()
     if (clownFish->checkCollisionWithObject(seaGrassBounds.minX, seaGrassBounds.maxX,
         seaGrassBounds.minY, seaGrassBounds.maxY,
         seaGrassBounds.minZ, seaGrassBounds.maxZ)) {
+        clownFish->x = oldX;
+        clownFish->y = oldY;
+        clownFish->z = oldZ;
+    }
+    if (clownFish->checkCollisionWithObject(chestBottomBounds.minX, chestBottomBounds.maxX,
+        chestBottomBounds.minY, chestBottomBounds.maxY,
+        chestBottomBounds.minZ, chestBottomBounds.maxZ) ||
+        clownFish->checkCollisionWithObject(chestTopBounds.minX, chestTopBounds.maxX,
+            chestTopBounds.minY, chestTopBounds.maxY,
+            chestTopBounds.minZ, chestTopBounds.maxZ)) {
         clownFish->x = oldX;
         clownFish->y = oldY;
         clownFish->z = oldZ;
@@ -572,7 +584,6 @@ void::Aquarium::run() {
     //glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     setCullingAndDepth(isEnabledDepthTest, isEnabledFaceCulling, cullBackFaces, isCCWWinding);
-    Renderer::drawTexturedRect(textureShader, VAOsignature, signatureTexture);
 
     Renderer::drawTexturedCube(unifiedShader, VAOchest, chestBottomMatrix, woodTexture, false);
     if (isChestOpen) {
@@ -671,6 +682,7 @@ void::Aquarium::run() {
                                  fishWorldMinZ, fishWorldMaxZ,
                                  std::bind(&Fish::eat, clownFish));
     Renderer::drawSquare(unifiedShader, VAOFarGlass, frontWall, 0.2f, 0.5f, 0.8f, 0.3f);
+    Renderer::drawTexturedRect(textureShader, VAOsignature, signatureTexture);
 }
 
 void Aquarium::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
